@@ -9,7 +9,11 @@ require('dotenv').config();
 
 const app = express();
 const cors = require("cors");
-app.use(cors());
+app.use(cors({
+    origin:"*",
+    credentials:true,
+    methods:['GET','POST','DELETE']
+}));
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
