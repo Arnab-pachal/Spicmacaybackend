@@ -9,6 +9,8 @@ require('dotenv').config();
 
 const app = express();
 const cors = require("cors");
+
+
 app.use(cors({
     origin:"*",
     credentials:true,
@@ -32,6 +34,8 @@ app.listen(3001, () => {
 app.use("/uploads", express.static("uploads"));
 const path = require('path');
 const uploadPath = path.join(__dirname, 'uploads');
+
+
 
 app.get("/", async (req, res) => {
    try{ const alldata = await Mongo.find({});
@@ -94,6 +98,7 @@ const upload = multer({ storage });
 
 app.post('/cloud', upload.single('file'), async (req, res) => {
     const path = req.file.path;
+    console.log(path);
     try {
         const result = await cloudinary.uploader.upload(path, {
             public_id: req.file.originalname,
@@ -110,7 +115,7 @@ app.post('/cloud', upload.single('file'), async (req, res) => {
       
     } catch (error) {
         console.log('Upload error:', error);
-        res.status(500).send('Error uploading file.');
+        res.status(500).send('Error uploading file.:- ',error);
     }
     res.status(200).json({ message: "File uploaded successfully!"});
 });
