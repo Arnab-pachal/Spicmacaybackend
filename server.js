@@ -9,11 +9,7 @@ require('dotenv').config();
 
 const app = express();
 const cors = require("cors");
-app.use(cors({
-    origin: ["https://spicmacaynitdurgapur.vercel.app/"], 
-    methods: ["GET", "POST", "DELETE"],
-    credentials:true 
-}));
+app.use(cors());
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
