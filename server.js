@@ -35,7 +35,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // Max file size: 10MB
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
+    const allowedTypes = ["image/jpeg","image/jpg","image/webp","image/png", "video/mp4"];
     if (!allowedTypes.includes(file.mimetype)) {
       return cb(new Error("Unsupported file type"), false);
     }
