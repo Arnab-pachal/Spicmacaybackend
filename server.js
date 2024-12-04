@@ -12,6 +12,8 @@ if (!process.env.CLOUD_NAME || !process.env.API_KEY || !process.env.API_SECRET) 
   process.exit(1);
 }
 
+
+
 const app = express();
 
 // Middleware
@@ -28,12 +30,11 @@ cloudinary.config({
 });
 
 // Server Start
-app.listen(3001, () => console.log("App is listening on port 3001"));
 
 // File Upload Middleware
 const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // Max file size: 10MB
+  dest:"./env",
+  limits: { fileSize: 100 * 1024 * 1024 }, // Max file size: 10MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = ["image/jpeg","image/jpg","image/webp","image/png", "video/mp4"];
     if (!allowedTypes.includes(file.mimetype)) {
@@ -43,6 +44,7 @@ const upload = multer({
   },
 });
 
+app.listen(3001, () => console.log("App is listening on port 3001"));
 // Routes
 
 // Fetch all images
@@ -66,20 +68,18 @@ app.get("/getvideo", async (req, res) => {
     res.status(500).json({ message: "Error fetching videos" });
   }
 });
-
+const check=(req,res,next)=>{
+console.log(req);
+next();
+}
 // Upload an image
-app.post("/cloud", upload.single("file"), async (req, res) => {
+app.post("/cloud",check ,upload.single('file') ,async (req, res) => {
   try {
+    console.log(req.file);
     if (!req.file) throw new Error("No file provided");
-
-    const result = await cloudinary.uploader.upload_stream(
-      { public_id: req.file.originalname },
-      (error, result) => {
-        if (error) throw error;
-        return result;
-      }
-    );
-
+    const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "image",
+      });
     const newPic = new Mongo({ name: req.file.originalname, url: result.url });
     await newPic.save();
 
@@ -91,7 +91,7 @@ app.post("/cloud", upload.single("file"), async (req, res) => {
 });
 
 // Upload a video
-app.post("/upload", upload.single("video"), async (req, res) => {
+app.post("/upload", upload.single('video'), async (req, res) => {
   try {
     if (!req.file) throw new Error("No file provided");
 
