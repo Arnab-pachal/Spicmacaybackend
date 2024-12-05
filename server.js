@@ -33,7 +33,7 @@ cloudinary.config({
 
 // File Upload Middleware
 const upload = multer({
-  dest:"./env",
+  dest:"./tmp",
   limits: { fileSize: 100 * 1024 * 1024 }, // Max file size: 10MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = ["image/jpeg","image/jpg","image/webp","image/png", "video/mp4"];
